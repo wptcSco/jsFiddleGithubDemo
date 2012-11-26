@@ -4,5 +4,129 @@
 	$$('#demo span').each(function(el) {
 		el.setStyle('backgroundColor', '#ffb');
 	});
+	$$('#demo').append('body');
 </script>
 
+<meta http-equiv="content-type" content="text/html; charset=us-ascii" />
+<meta name="viewport" content="width=device-width" />
+<title>Google Business Photos Pulse</title>
+<script src="//maps.googleapis.com/maps/api/js?sensor=false"
+  type="text/javascript">
+    </script>
+    <script type="text/javascript" src="//maps.gstatic.com/intl/en_us/mapfiles/cb/mspp/tour_embed.js">
+    </script>
+    <link rel="StyleSheet" href="//maps.gstatic.com/intl/en_us/mapfiles/cb/mspp/tour_embed.css" type="text/css" media="screen" />
+</head>
+<body onload="init()">
+  <div id="parameter-info" style="display: none;">
+    <table border="1" summary="table for configuration changes">
+      <tr>
+        <th>Config</th>
+        <th>Value</th>
+      </tr>
+      <tr>
+        <td>Pitch Fade in/Out Amount</td>
+        <td><input type="text" id="max-pitch" value="15" /></td>
+      </tr>
+      <tr>
+        <td>Min Rotation Degrees (after entrance moves):</td>
+        <td><input type="text" id="min-turn" value="120" /></td>
+      </tr>
+      <tr>
+        <td>Degrees Per Second:</td>
+        <td><input type="text" id="speed" value="15" /></td>
+      </tr>
+      <tr>
+        <td>Turn across direction of motion, or away from</td>
+        <td><input type="text" id="turn-towards" value="away" /></td>
+      </tr>
+      <tr>
+        <td>Wait how many panos before rotating?:</td>
+        <td><input type="text" id="frames-wait" value="2" /></td>
+      </tr>
+      <tr>
+        <td>Turn degrees to start offset?:</td>
+        <td><input type="text" id="start-offset" value="30" /></td>
+      </tr>
+      <tr>
+        <td>Max number of panos?:</td>
+        <td><input type="text" id="max-panos" value="6" /></td>
+      </tr>
+      <tr>
+        <td>Which Turn Style?(0=base, 1=spin, 2=always parallel):</td>
+        <td><input type="text" id="turn-style" value="0" /></td>
+      </tr>
+      <tr>
+        <td>Tour from interior to storefront? (t or f):</td>
+        <td><input type="text" id="inside-out" value="t"/></td>
+      </tr>
+      <tr>
+        <td>Finish with a full rotation? (t or f):</td>
+        <td><input type="text" id="rotate-end" value="f"/></td>
+      </tr>
+      </table>
+  </div>
+  <div id="gallery_frame">
+    <div id="pano_div">
+      <object class="pano_ob" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"
+        id="flash_pano" align="middle"  height="540">
+        <param name="movie"
+          value="//maps.gstatic.com/intl/en_us/mapfiles/cb/mspp/googlepano_tour.164.swf" />
+        <param name="quality" value="high" />
+        <param name="scale" value="noscale" />
+        <param name="salign" value="tl" />
+        <param name="allowfullscreen" value="true" />
+        <param name="wmode" value="opaque" />
+        <param name="swliveconnect" value="true" />
+        <param name="allowscriptaccess" value="always" />
+        <param name="flashvars" value="context=api&amp;animateOnLoad=false&amp;viewerId=0&amp;rtfArgs=ph:1,an:1,fs:1,np:1" />
+        <!--[if !IE]>-->
+        <embed class="pano_ob"
+          src="//maps.gstatic.com/intl/en_us/mapfiles/cb/mspp/googlepano_tour.164.swf"
+          quality="high" name="flash_pano" align="middle" allowfullscreen="true"
+          allowscriptaccess="always" type="application/x-shockwave-flash"
+          wmode="opaque" swliveconnect="true" scale="noscale" salign="tl"
+          flashvars="context=api&amp;animateOnLoad=false&amp;viewerId=0&amp;rtfArgs=ph:1,an:1,fs:1,np:1"
+          id="flash_pano_embed"/>
+        <!--<![endif]-->
+      </object>
+    </div>
+    <div id="progress-wrapper">
+       <div id="progress-value"></div>
+    </div>
+    <div id="pulse-info">
+      <div id="pulse-section-left">
+        <div id="pulse-infoleft">
+          <a target="_blank" id="pulse-user-photo"><img id="pulse-image" width="150" height="59" src="/" alt="" /></a>
+          <img width="23" height="38" src="//maps.google.com/help/maps/streetview/images/mapPin.png" alt="map pin" />
+        </div>
+        <div id="pulse-inforight">
+          <div class="pulse-title">
+            <a id="pulse_title" target="_blank" style="text-decoration:none;"></a>
+            <div class="pulse-subtitle" id="pulse_sub"></div>
+            <div id="pulse-time"></div>
+          </div>
+        </div>
+      </div>
+      <div id="pulse-section-center">
+        <div id="pulse-dash-title">
+          <a href="javascript:void(0);" id="pulse-prev-button" title="Previous" class=""><img class="pulse-control" src="//maps.gstatic.com/intl/en_us/mapfiles/cb/mspp/prev_dark.gif" alt="" /></a>
+          <a href="javascript:void(0);" id="pulse-360-button" title="360" style="display: none;"><img class="pulse-control" src="//maps.gstatic.com/intl/en_us/mapfiles/cb/mspp/pano_360.png" alt="" /></a>
+          <a href="javascript:void(0);" id="pulse-play-button" title="Play" style="display: none;"><img class="pulse-control" src="//maps.gstatic.com/intl/en_us/mapfiles/cb/mspp/play_dark.gif" alt="" /></a>
+          <a href="javascript:void(0);" id="pulse-pause-button" title="Pause" style="display: inline;"><img class="pulse-control" src="//maps.gstatic.com/intl/en_us/mapfiles/cb/mspp/pause_dark.gif" alt="" /></a>
+          <a href="javascript:void(0);" id="pulse-next-button" title="Next"><img class="pulse-control" src="//maps.gstatic.com/intl/en_us/mapfiles/cb/mspp/next_dark.gif" alt="" /></a>
+        </div>
+      </div>
+      <div id="pulse-section-right">
+        <div id="map_canvas"></div>
+      </div>
+    </div>
+  </div>
+  <div style="display:none;">
+
+  </div>
+  <script type="text/javascript">
+    function init(){
+      controller = new cityblock_innerspace.TourController();
+    }
+  </script>
